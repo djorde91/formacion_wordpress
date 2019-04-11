@@ -2,7 +2,7 @@
 /**
 * Plugin Name: Peliculas
 *
-* Description: Plugin para mostrar información de peliculas.
+* Description: Plugin para mostrar información de peliculas. Simplemente tienes que introducir el nombre.
 * Version: 1.0
 * Author: Daniel Jorde del Castillo
 * 
@@ -14,8 +14,8 @@ if ( ! function_exists('peliculas_custom_post') ) {
 function peliculas_custom_post() {
 
 	$labels = array(
-		'name'                  => _x( 'peliculas', 'Post Type General Name', 'translate_domain' ),
-		'singular_name'         => _x( 'pelicula', 'Post Type Singular Name', 'translate_domain' ),
+		'name'                  => _x( 'Peliculas', 'Post Type General Name', 'translate_domain' ),
+		'singular_name'         => _x( 'Pelicula', 'Post Type Singular Name', 'translate_domain' ),
 		'menu_name'             => __( 'Películas', 'translate_domain' ),
 		'name_admin_bar'        => __( 'Películas', 'translate_domain' ),
 		'archives'              => __( 'Item Archives', 'translate_domain' ),
@@ -44,7 +44,7 @@ function peliculas_custom_post() {
 	);
 	$args = array(
 		'label'                 => __( 'pelicula', 'translate_domain' ),
-		'description'           => __( 'Post Type Description', 'translate_domain' ),
+		'description'           => __( 'Listado de todas las películas que quiero ver', 'translate_domain' ),
 		'labels'                => $labels,
 		'supports'              => array( 'title', 'editor' ),
 		'taxonomies'            => array( 'category', 'post_tag' ),
@@ -60,7 +60,7 @@ function peliculas_custom_post() {
 		'exclude_from_search'   => false,
 		'publicly_queryable'    => true,
 		'capability_type'       => 'page',
-		'supports' => array( 'title','editor','thumbnail')
+		'supports' => array( 'title')
 	);
 	register_post_type( 'peliculas', $args );
 
@@ -69,30 +69,55 @@ add_action( 'init', 'peliculas_custom_post', 0 );
 
 }
 
-function getPostInfo(){
+/* Filter the single_template with our custom function*/
+function my_custom_template($single) {
 
-global $wp_query;
-$postid = $wp_query->post->ID;
-        //get_post_meta($postid);
-        //get_post_type($postid);
+    global $post;
 
-$args = array(
-	'post_id'                => $postid,
-	'post_type'              => array( 'peliculas' ),
-	'post_status'            => array( 'Publish' ),
-	'orderby'                => 'title',
-);
+    /* Checks for single template by post type */
+    if ( $post->post_type == 'peliculas' ) {
+    	//echo "post type peliculas";
 
-// The Query
-$query = new WP_Query( $args );
-var_dump($query);
+        if ( file_exists(WP_PLUGIN_DIR.'/peliculas/templates/single-peliculas.php' ) ) {
+        	
+            return WP_PLUGIN_DIR.'/peliculas/templates/single-peliculas.php';
+        }
+    }
 
+    return $single;
 
 }
-
-add_action('wp_head','getPostInfo');
-
+add_filter('single_template', 'my_custom_template');
 
 
+function api_movie_info(){
+
+		global $wp_query;
+ 		$postid = $wp_query->post->ID;
+
+		$movie_name = get_post_meta($postid)['nombre'][0];
+		$movie_name = preg_replace('/\s+/', '', $movie_name);
+		$url = "http://www.omdbapi.com/?apikey=17265263&t=". $movie_name;
+		$ch = curl_init();
+
+		//echo $url;
+
+		// Set query data here with the URL
+		curl_setopt($ch, CURLOPT_URL, $url); 
+
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 3);
+		$content = trim(curl_exec($ch));
+
+		curl_close($ch);
+
+		//print_r($content);
+		$array_json = json_decode($content, true);
+		//var_dump($array_json);
+		//var_dump($array_json['Title']);
+
+		return $array_json;
+		//var_dump($array_json['Title']);
+}
 
 ?>
