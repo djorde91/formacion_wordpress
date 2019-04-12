@@ -18,14 +18,11 @@ get_header(); ?>
 					<p> <strong>Nombre:</strong> <?php echo $peli_info['Title'];  ?></p>
 					<p> <strong>Año:</strong> <?php echo $peli_info['Year'];  ?></p>
 					<p> <strong>Rated:</strong> <?php echo $peli_info['Rated'];  ?></p>
-					<p> <strong>Rated:</strong> <?php echo $peli_info['Rated'];  ?></p>
 					<p> <strong>Released:</strong> <?php echo $peli_info['Released'];  ?></p>
 					<p> <strong>Language:</strong> <?php echo $peli_info['Language'];  ?></p>
 					<p> <strong>Country:</strong> <?php echo $peli_info['Country'];  ?></p>
 					<p> <strong>Runtime:</strong> <?php echo $peli_info['Runtime'];  ?></p>
 					<p> <strong>Awards:</strong> <?php echo $peli_info['Awards'];  ?></p>
-					
-					<p> <strong>Runtime:</strong> <?php echo $peli_info['Runtime'];  ?></p>
 
 					<p> <strong>Plot:</strong> <?php echo $peli_info['Plot'];  ?></p>
 					</div>
