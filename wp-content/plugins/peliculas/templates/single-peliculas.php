@@ -11,27 +11,40 @@ get_header(); ?>
 				get_template_part( 'template-parts/content', 'single');
 
 				// Start custom code
-					$peli_info =  api_movie_info();
+
+					//$content_pelis = get_post_field('nombre', $post_id);
+					//echo $content_pelis;
+					 //$content_post = get_post();
+
 				?>
-				<div class="row">
-					<div class="col-md-8">
-					<p> <strong>Nombre:</strong> <?php echo $peli_info['Title'];  ?></p>
-					<p> <strong>Año:</strong> <?php echo $peli_info['Year'];  ?></p>
-					<p> <strong>Rated:</strong> <?php echo $peli_info['Rated'];  ?></p>
-					<p> <strong>Rated:</strong> <?php echo $peli_info['Rated'];  ?></p>
-					<p> <strong>Released:</strong> <?php echo $peli_info['Released'];  ?></p>
-					<p> <strong>Language:</strong> <?php echo $peli_info['Language'];  ?></p>
-					<p> <strong>Country:</strong> <?php echo $peli_info['Country'];  ?></p>
-					<p> <strong>Runtime:</strong> <?php echo $peli_info['Runtime'];  ?></p>
-					<p> <strong>Awards:</strong> <?php echo $peli_info['Awards'];  ?></p>
-					
-					<p> <strong>Runtime:</strong> <?php echo $peli_info['Runtime'];  ?></p>
+				<div class="row peliculas_wrap_selector">
+					<div class="col-md-8 peliculas_info">
 
-					<p> <strong>Plot:</strong> <?php echo $peli_info['Plot'];  ?></p>
+						<?php 
+
+						$fields = get_fields();
+						//var_dump($fields);
+
+						if( $fields ): ?>
+						    
+						        <?php foreach( $fields as $name => $value ): ?>
+
+						        	<?php $field_label = get_field_object($name)['label'];
+						        	//var_dump($field_label); 
+						        	?>
+
+									<?php if ($value !== '' && $name != "autocompletar"): ?>
+										 <p><b><?php echo $field_label .':'; ?></b> <?php echo $value; ?></p>
+									<?php endif ?>
+						           
+						        <?php endforeach; ?>
+						    
+						<?php endif; ?>
+
 					</div>
-					<img src="<?php echo $peli_info['Poster'];?>" alt="">
-					<div class="col-md-4">
-
+					
+					<div class="col-md-4 peliculas_poster">
+						<!-- <img src="<?php echo $peli_info['Poster'];?>" alt=""> -->
 					</div>
 				</div>
 

@@ -8,6 +8,13 @@
 * 
 **/
 
+function load_all_scripts() {
+	  wp_enqueue_script( 'peliculas_ajax', plugins_url( '/js/ajax-peliculas.js', __FILE__ ), array('jquery'), '1.0', true );
+}
+add_action( 'wp_enqueue_scripts', 'load_all_scripts' );
+add_action( 'admin_enqueue_scripts', 'load_all_scripts' );
+
+
 if ( ! function_exists('peliculas_custom_post') ) {
 
 // Register Custom Post Type
@@ -60,7 +67,7 @@ function peliculas_custom_post() {
 		'exclude_from_search'   => false,
 		'publicly_queryable'    => true,
 		'capability_type'       => 'page',
-		'supports' => array( 'title')
+		'supports' => array( '')
 	);
 	register_post_type( 'peliculas', $args );
 
@@ -68,6 +75,29 @@ function peliculas_custom_post() {
 add_action( 'init', 'peliculas_custom_post', 0 );
 
 }
+
+// Title de la pelicula es igual al campo Nombre.
+function post_title_post_field( $value, $post_id, $field ) {
+
+	if ( get_post_type( $post_id ) == 'peliculas' ) {   
+		
+	    $nombre = get_field('nombre', $post_id);
+	    $title = $nombre;
+	    $slug = sanitize_title( $title );
+	    $postdata = array(
+	         'ID'      => $post_id,
+	         'post_title'  => $title,
+	         'post_type'   => 'peliculas',
+	         'post_name'   => $slug
+	    );
+	wp_update_post( $postdata, true );
+	return $value;
+	}
+
+}
+
+add_filter('acf/update_value/name=nombre', 'post_title_post_field', 
+10, 3);
 
 /* Filter the single_template with our custom function*/
 function my_custom_template($single) {
@@ -92,12 +122,14 @@ add_filter('single_template', 'my_custom_template');
 
 function api_movie_info(){
 
-		global $wp_query;
- 		$postid = $wp_query->post->ID;
+		global $post;
+		$post_id = $post->ID;
 
-		$movie_name = get_post_meta($postid)['nombre'][0];
+		$movie_name = get_post_meta($post_id,'nombre', true);
 		$movie_name = preg_replace('/\s+/', '', $movie_name);
-		$url = "http://www.omdbapi.com/?apikey=17265263&t=". $movie_name;
+
+		$url = "http://www.omdbapi.com/?apikey=17265263&t=". "matilda" //$movie_name
+		;
 		$ch = curl_init();
 
 		//echo $url;
@@ -111,13 +143,19 @@ function api_movie_info(){
 
 		curl_close($ch);
 
-		//print_r($content);
-		$array_json = json_decode($content, true);
-		//var_dump($array_json);
-		//var_dump($array_json['Title']);
+		//echo $content;
+		$content = json_encode($content,true);
+		echo $content;
 
-		return $array_json;
-		//var_dump($array_json['Title']);
+		// print_r($content);
+
+		wp_die();
+	
 }
 
+
+add_action('wp_ajax_nopriv_api_movie_info', 'api_movie_info');
+add_action('wp_ajax_api_movie_info', 'api_movie_info');
+
 ?>
+
