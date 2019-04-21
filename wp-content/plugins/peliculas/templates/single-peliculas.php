@@ -33,7 +33,7 @@ get_header(); ?>
 						        	//var_dump($field_label); 
 						        	?>
 
-									<?php if ($value !== '' && $name != "autocompletar"): ?>
+									<?php if ($value !== '' && $name != "peli_autocompletar"): ?>
 										 <p><b><?php echo $field_label .':'; ?></b> <?php echo $value; ?></p>
 									<?php endif ?>
 						           

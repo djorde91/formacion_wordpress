@@ -1,0 +1,9 @@
+.notice_selector_error, .notice_selector_success, .sugerencias_none {
+	display: none;
+}
+.notice_error_display, .notice_success_display, .sugerencias_display{
+	display: block;
+}
+
+body div.acf-input .sugerencias_peliculas{
+	margin-top: 2px;

@@ -10,6 +10,7 @@
 
 function load_all_scripts() {
 	  wp_enqueue_script( 'peliculas_ajax', plugins_url( '/js/ajax-peliculas.js', __FILE__ ), array('jquery'), '1.0', true );
+	  wp_enqueue_style( 'peliculas_css', plugins_url( '/css/peliculas_css.css', __FILE__ ) );
 }
 add_action( 'wp_enqueue_scripts', 'load_all_scripts' );
 add_action( 'admin_enqueue_scripts', 'load_all_scripts' );
@@ -76,28 +77,203 @@ add_action( 'init', 'peliculas_custom_post', 0 );
 
 }
 
+if( function_exists('acf_add_local_field_group') ):
+
+acf_add_local_field_group(array(
+	'key' => 'group_5cabb06ec8d3e',
+	'title' => 'Campos_pelis',
+	'fields' => array(
+		array(
+			'key' => 'field_5cabb07cc9899',
+			'label' => 'Nombre',
+			'name' => 'peli_nombre',
+			'type' => 'text',
+			'instructions' => 'Escribe el nombre de una película, luego podrás rellenar más información',
+			'required' => 1,
+			'conditional_logic' => 0,
+			'wrapper' => array(
+				'width' => '',
+				'class' => '',
+				'id' => '',
+			),
+			'default_value' => '',
+			'placeholder' => '',
+			'prepend' => '',
+			'append' => '',
+			'maxlength' => '',
+		),
+		array(
+			'key' => 'field_5cb9dc30113ca',
+			'label' => 'Año',
+			'name' => 'peli_anyo',
+			'type' => 'number',
+			'instructions' => '',
+			'required' => 0,
+			'conditional_logic' => array(
+				array(
+					array(
+						'field' => 'field_5cabb07cc9899',
+						'operator' => '!=empty',
+					),
+				),
+			),
+			'wrapper' => array(
+				'width' => '',
+				'class' => '',
+				'id' => '',
+			),
+			'default_value' => '',
+			'placeholder' => '',
+			'prepend' => '',
+			'append' => '',
+			'min' => 1750,
+			'max' => 2075,
+			'step' => 1,
+		),
+		array(
+			'key' => 'field_5cbb380954532',
+			'label' => 'Autocompletar',
+			'name' => 'peli_autocompletar',
+			'type' => 'button_group',
+			'instructions' => 'El autocompletar rellenará los campos con los mostrados en las sugerencias.',
+			'required' => 0,
+			'conditional_logic' => array(
+				array(
+					array(
+						'field' => 'field_5cabb07cc9899',
+						'operator' => '!=empty',
+					),
+
+				),
+			),
+			'wrapper' => array(
+				'width' => '',
+				'class' => '',
+				'id' => '',
+			),
+			'choices' => array(
+				'Click para autocompletar' => 'Click para autocompletar',
+			),
+			'allow_null' => 0,
+			'default_value' => '',
+			'layout' => 'horizontal',
+			'return_format' => 'value',
+		),
+		array(
+			'key' => 'field_5cb9fdd7c255e',
+			'label' => 'Duración',
+			'name' => 'peli_duracion',
+			'type' => 'text',
+			'instructions' => '',
+			'required' => 0,
+			'conditional_logic' => array(
+				array(
+					array(
+						'field' => 'field_5cabb07cc9899',
+						'operator' => '!=empty',
+					),
+				),
+			),
+			'wrapper' => array(
+				'width' => '',
+				'class' => '',
+				'id' => '',
+			),
+			'default_value' => '',
+			'placeholder' => '',
+			'prepend' => '',
+			'append' => '',
+			'maxlength' => '',
+		),
+		array(
+			'key' => 'field_5cba01123bcfc',
+			'label' => 'Director',
+			'name' => 'peli_director',
+			'type' => 'text',
+			'instructions' => '',
+			'required' => 0,
+			'conditional_logic' => array(
+				array(
+					array(
+						'field' => 'field_5cabb07cc9899',
+						'operator' => '!=empty',
+					),
+
+				),
+			),
+			'wrapper' => array(
+				'width' => '',
+				'class' => '',
+				'id' => '',
+			),
+			'default_value' => '',
+			'placeholder' => '',
+			'prepend' => '',
+			'append' => '',
+			'maxlength' => '',
+		),
+		array(
+			'key' => 'field_5cba01a6671b2',
+			'label' => 'Argumento',
+			'name' => 'peli_argumento',
+			'type' => 'text',
+			'instructions' => '',
+			'required' => 0,
+			'conditional_logic' => array(
+				array(
+					array(
+						'field' => 'field_5cabb07cc9899',
+						'operator' => '!=empty',
+					),
+
+				),
+			),
+			'wrapper' => array(
+				'width' => '',
+				'class' => '',
+				'id' => '',
+			),
+			'default_value' => '',
+			'placeholder' => '',
+			'prepend' => '',
+			'append' => '',
+			'maxlength' => '',
+		),
+	),
+	'location' => array(
+		array(
+			array(
+				'param' => 'post_type',
+				'operator' => '==',
+				'value' => 'peliculas',
+			),
+		),
+	),
+	'menu_order' => 0,
+	'position' => 'normal',
+	'style' => 'default',
+	'label_placement' => 'top',
+	'instruction_placement' => 'label',
+	'hide_on_screen' => '',
+	'active' => true,
+	'description' => '',
+));
+
+endif;
+
 // Title de la pelicula es igual al campo Nombre.
-function post_title_post_field( $value, $post_id, $field ) {
-
-	if ( get_post_type( $post_id ) == 'peliculas' ) {   
-		
-	    $nombre = get_field('nombre', $post_id);
-	    $title = $nombre;
-	    $slug = sanitize_title( $title );
-	    $postdata = array(
-	         'ID'      => $post_id,
-	         'post_title'  => $title,
-	         'post_type'   => 'peliculas',
-	         'post_name'   => $slug
-	    );
-	wp_update_post( $postdata, true );
-	return $value;
-	}
-
+function custom_post_type_title($post_id)
+{
+    global $wpdb;
+    if (get_post_type($post_id) == 'peliculas') {
+        $name = get_post_custom_values('peli_nombre');
+        $title = $name[0];
+        $where = array('ID' => $post_id);
+        $wpdb->update($wpdb->posts, array('post_title' => $title), $where);
+    } 
 }
-
-add_filter('acf/update_value/name=nombre', 'post_title_post_field', 
-10, 3);
+ 
+add_action('save_post', 'custom_post_type_title');
 
 /* Filter the single_template with our custom function*/
 function my_custom_template($single) {
@@ -122,14 +298,21 @@ add_filter('single_template', 'my_custom_template');
 
 function api_movie_info(){
 
-		global $post;
-		$post_id = $post->ID;
+		// global $post;
+		// $post_id = $post->ID;
 
-		$movie_name = get_post_meta($post_id,'nombre', true);
-		$movie_name = preg_replace('/\s+/', '', $movie_name);
+		// $movie_name = get_post_meta($post_id,'nombre', true);	
+		$movie_name = preg_replace('/\s+/', '+', $_POST['movie_name']);
 
-		$url = "http://www.omdbapi.com/?apikey=17265263&t=". "matilda" //$movie_name
-		;
+		if (isset($_POST['movie_year']) ) {
+		   $url = "http://www.omdbapi.com/?apikey=17265263&t=". $movie_name. '&y=' . $_POST['movie_year'] ;
+			
+		}else{
+		   $url = "http://www.omdbapi.com/?apikey=17265263&t=". $movie_name;
+		}
+
+		
+
 		$ch = curl_init();
 
 		//echo $url;
@@ -146,7 +329,6 @@ function api_movie_info(){
 		//echo $content;
 		$content = json_encode($content,true);
 		echo $content;
-
 		// print_r($content);
 
 		wp_die();
