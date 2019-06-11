@@ -60,6 +60,25 @@ if(!empty($selected_categories) && taxonomy_exists($post_type)){
  );
 
 
+// Pukkas EDIT
+
+//var_dump($selected_categories);
+ foreach($selected_categories as $item) {
+    $term = get_term($item);
+    $color = get_field('color_de_la_categoria', $term);
+    echo 'id_categoria: '. $item . ' ' . $term->name . ' el color: '  . $color .'<br>';
+ }
+
+ // foreach($events as $item){
+ //    $item_id = $item->get_id();
+ //     $primera_categoria = get_the_terms($item_id, 'event_category')[0];
+ //    $post_name = get_post($item_id);
+ //     echo $post_name->post_title . ' ' . $item->get_id() .  ' ' . $primera_categoria->name . '<br>';
+
+ // }
+
+//var_dump($events);
+
 
 for ($row=1; $row<=3; $row++) {
 
@@ -103,16 +122,18 @@ for ($row=1; $row<=3; $row++) {
                 $currentDayRel = str_pad($currentDay, 2, "0", STR_PAD_LEFT);
                 $currentMonthRel = str_pad($month, 2, "0", STR_PAD_LEFT);
                 $date = $year->getYear()."-$currentMonthRel-$currentDayRel";
+
+
                 ?>
                 <td class='gd_cyc' rel='<?php echo $date; ?>'>
-                <p <?php echo ($year->getCurrentDate() === $date ) ? 'class="gd_calendar_year_current_date"' : ''; ?>><?php echo $currentDay; ?></p>
+                <p class="year_color_pukkas" <?php echo ($year->getCurrentDate() === $date ) ? 'class="gd_calendar_year_current_date"' : ''; ?>><?php echo $currentDay; ?></p>
 
                 <?php
 
                     $evn_small_wrapper='<div class="gd_es">';
                     $has_event="";
 
-                    $counter = 1;
+                    $counter = 0;
                     if(isset($_GET['search'])){
                         foreach ($year->getSearchedEvent() as $event) {
                             $event_id = absint($event);
@@ -156,6 +177,7 @@ for ($row=1; $row<=3; $row++) {
                             if(!empty($event_dates)):
                                 foreach ($event_dates as $value){
 	                                foreach ($value as $event_date):
+
                                         if($date === substr($event_date, 0, 10)){
                                             if ($counter <= 3) {
                                                 $circle = '';
@@ -239,26 +261,51 @@ for ($row=1; $row<=3; $row++) {
 	                                }else{
 		                                $event_dates = $event->get_date_range();
 	                                }
-	                                if(!empty($event_dates)):
+	                                if(!empty($event_dates)):                                 
+                                     foreach($events as $item){
+                                            $item_id = $item->get_id();
+                                            $primera_categoria = get_the_terms($item_id, 'event_category')[0];
+                                            $post_name = get_post($item_id);
+                                            //echo $post_name->post_title . ' ' . $item->get_id() .  ' ' . $primera_categoria->name . '<br>';
+
+                                            $color_categoria = get_field('color_de_la_categoria', $primera_categoria);
+                                            //var_dump($color_categoria);
+                                                       
+                                            $post_date = $item->get_date_range()[0];
+                                            //echo $post_date[0] . '<br>';
                                         foreach ($event_dates as $value) {
+                                            //var_dump($value);
 	                                        foreach ($value as $event_date):
                                                 if ($date === substr($event_date, 0, 10)) {
-                                                    if ($counter <= 3) {
-                                                        $circle = '';
-                                                        if ($counter == 1) {
-                                                            $circle = 'circle_first';
-                                                        } elseif ($counter == 2) {
-                                                            $circle = 'circle_second';
-                                                        } elseif ($counter == 3) {
-                                                            $circle = 'circle_third';
-                                                        }
+                                                     //echo substr($event_date, 0, 10) . '<br> <br> <br>';
 
-                                                        $has_event.=' <span class="'.$circle.'"></span>';
+                                                    
+
+                                                        
+                                                                                                                                         
+                                                        // //if ($counter <= 3) {
+                                                        //     $circle = '';
+                                                        //     if ($counter == 1) {
+                                                        //         $circle = 'circle_first';
+                                                        //     } elseif ($counter == 2) {
+                                                        //         $circle = 'circle_second';
+                                                        //     } elseif ($counter == 3) {
+                                                        //         $circle = 'circle_third';
+                                                        //     }
+
+                                                            if ($post_date[0] === substr($value[0], 0, 10)) {
+                                                                $has_event.=' <span style="background-color:'. $color_categoria . ';"class="pukkas_circles circle_first '.$circle.'"></span>';
+                                                                
+                                                            }
+
+                                                        //}
+                                                        //$counter++;
                                                     }
-                                                    $counter++;
-                                                }
+                                                
 	                                        endforeach;
+                                            }
                                         }
+                                    
                                     endif;
                                 }
                             }
