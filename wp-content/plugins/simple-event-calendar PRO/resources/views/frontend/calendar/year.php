@@ -3,7 +3,7 @@
  * Calendar Year View
  * @var $year \GDCalendar\Helpers\Builders\MonthCalendarBuilder
  */
-
+ // Vista anual modificada por Pukkas, (Mirar el Plugin original para recuperar este archivo.)
 $months = $year->getMonthsOfYear();
 $currentDateComponents = $year->getDateComponents();
 $currentMonthName = $currentDateComponents['month'];
@@ -33,10 +33,10 @@ $even=0;
 
 /*getting events*/
 if(isset($_POST['id'])){
-	$post_id = absint($_POST['id']);
+    $post_id = absint($_POST['id']);
 }
 elseif (null !== get_post()){
-	$post_id = absint(get_post()->ID);
+    $post_id = absint(get_post()->ID);
 }
 else{throw new \Exception('Cannot show year view for not existing post');}
 $calendar = new \GDCalendar\Models\PostTypes\Calendar($post_id);
@@ -45,52 +45,31 @@ $selected_categories = $calendar->get_cat();
 
 $tax_param = '';
 if(!empty($selected_categories) && taxonomy_exists($post_type)){
-	$tax_param = array(
-		'taxonomy' => $post_type,
-		'terms' => $selected_categories,
-		'include_children' => false,
-	);
+    $tax_param = array(
+        'taxonomy' => $post_type,
+        'terms' => $selected_categories,
+        'include_children' => false,
+    );
 }
  $events = \GDCalendar\Models\PostTypes\Event::get(array(
-		 'post_status' => 'publish',
-		 'tax_query' => array(
-			 $tax_param,
-		 )
-	 )
+         'post_status' => 'publish',
+         'tax_query' => array(
+             $tax_param,
+         )
+     )
  );
-
-
-// Pukkas EDIT
-
-//var_dump($selected_categories);
- foreach($selected_categories as $item) {
-    $term = get_term($item);
-    $color = get_field('color_de_la_categoria', $term);
-    echo 'id_categoria: '. $item . ' ' . $term->name . ' el color: '  . $color .'<br>';
- }
-
- // foreach($events as $item){
- //    $item_id = $item->get_id();
- //     $primera_categoria = get_the_terms($item_id, 'event_category')[0];
- //    $post_name = get_post($item_id);
- //     echo $post_name->post_title . ' ' . $item->get_id() .  ' ' . $primera_categoria->name . '<br>';
-
- // }
-
-//var_dump($events);
-
 
 for ($row=1; $row<=3; $row++) {
 
     echo '<tr>';
     for ($column=1; $column<=4; $column++) {
-	    if($weeksIn>=5 && $column%2 == 0){ $extraline='extra-margin';}
-	    echo '<td class="gd_calendar_month '.$extraline.'">';
+        if($weeksIn>=5 && $column%2 == 0){ $extraline='extra-margin';}
+        echo '<td class="gd_calendar_month '.$extraline.'">';
         $month++;
         $dateComponents = $year->getDateComponents($month);
         $dayOfWeek = $dateComponents['wday'];
         $thisYear = absint(date("Y"));
-	    $currentMonth=absint(date('m', strtotime('-1 month')))+1;
+        $currentMonth=absint(date('m', strtotime('-1 month')))+1;
         ?>
         <table class='gd_calendar_year_table'>
             <tr>
@@ -98,7 +77,7 @@ for ($row=1; $row<=3; $row++) {
             </tr>
             <tr><?php
                 foreach($year->getDaysOfWeek() as $key => $day) {
-	                $even++;
+                    $even++;
                     ?>
                     <td class='gd_calendar_header_year'><?php echo $day; ?></td>
                     <?php
@@ -108,8 +87,8 @@ for ($row=1; $row<=3; $row++) {
                     echo '<td></td>';
                 }
                 $currentDay = 1;
-		        $weeksIn=0;
-		        $extraline="";
+                $weeksIn=0;
+                $extraline="";
                 while ($currentDay <= $year->getDaysCount($month)) {
                     if ($dayOfWeek == 7) {
                         $dayOfWeek = 0;
@@ -122,62 +101,59 @@ for ($row=1; $row<=3; $row++) {
                 $currentDayRel = str_pad($currentDay, 2, "0", STR_PAD_LEFT);
                 $currentMonthRel = str_pad($month, 2, "0", STR_PAD_LEFT);
                 $date = $year->getYear()."-$currentMonthRel-$currentDayRel";
-
-
                 ?>
                 <td class='gd_cyc' rel='<?php echo $date; ?>'>
-                <p class="year_color_pukkas" <?php echo ($year->getCurrentDate() === $date ) ? 'class="gd_calendar_year_current_date"' : ''; ?>><?php echo $currentDay; ?></p>
+                <p <?php echo ($year->getCurrentDate() === $date ) ? 'class="gd_calendar_year_current_date"' : ''; ?>><?php echo $currentDay; ?></p>
 
                 <?php
 
                     $evn_small_wrapper='<div class="gd_es">';
                     $has_event="";
 
-                    $counter = 0;
+                    $counter = 1;
                     if(isset($_GET['search'])){
                         foreach ($year->getSearchedEvent() as $event) {
                             $event_id = absint($event);
                             $get_searched_event = new \GDCalendar\Models\PostTypes\Event($event_id);
 
-	                        if( $get_searched_event->get_repeat() === 'repeat' && $get_searched_event->get_repeat_type() !== "choose_type" ) {
-		                        $repeat_type = absint($get_searched_event->get_repeat_type());
-		                        $eventAllDay = $get_searched_event->get_all_day();
-		                        $eventStartDay = new DateTime($get_searched_event->get_start_date());
-		                        $eventEndDate = new DateTime($get_searched_event->get_end_date());
-		                        $eventInterval = intval($eventStartDay->diff($eventEndDate)->format('%a'));
-		                        $repeatTypeValue = \GDCalendar\Models\PostTypes\Event::$repeat_types[ $repeat_type ];
+                            if( $get_searched_event->get_repeat() === 'repeat' && $get_searched_event->get_repeat_type() !== "choose_type" ) {
+                                $repeat_type = absint($get_searched_event->get_repeat_type());
+                                $eventAllDay = $get_searched_event->get_all_day();
+                                $eventStartDay = new DateTime($get_searched_event->get_start_date());
+                                $eventEndDate = new DateTime($get_searched_event->get_end_date());
+                                $eventInterval = intval($eventStartDay->diff($eventEndDate)->format('%a'));
+                                $repeatTypeValue = \GDCalendar\Models\PostTypes\Event::$repeat_types[ $repeat_type ];
 
-		                        $maxDate = new DateTime($year->getLastDay());
-		                        $minDate = new DateTime($year->getFirstDay());
+                                $maxDate = new DateTime($year->getLastDay());
+                                $minDate = new DateTime($year->getFirstDay());
 
-		                        switch($repeat_type){
-			                        case 1:
-				                        $repeatValue = $get_searched_event->get_repeat_day();
-				                        break;
-			                        case 2:
-				                        $repeatValue = $get_searched_event->get_repeat_week();
-				                        break;
-			                        case 3:
-				                        $repeatValue = $get_searched_event->get_repeat_month();
-				                        break;
-			                        case 4:
-				                        $repeatValue = $get_searched_event->get_repeat_year();
-				                        break;
-			                        default:
-				                        $repeatValue = $get_searched_event->get_repeat_day();
-		                        }
-		                        if(is_null($repeatValue) || $repeatValue === 0){
-			                        $repeatValue = 1;
-		                        }
-		                        $event_dates = \GDCalendar\Helpers\Builders\CalendarBuilder::getRepeatedEventsDateRange($eventStartDay, $eventEndDate, $eventInterval, $repeatValue, $maxDate, $minDate, $repeatTypeValue, $eventAllDay );
-	                        }
-	                        else{
-		                        $event_dates = $get_searched_event->get_date_range();
+                                switch($repeat_type){
+                                    case 1:
+                                        $repeatValue = $get_searched_event->get_repeat_day();
+                                        break;
+                                    case 2:
+                                        $repeatValue = $get_searched_event->get_repeat_week();
+                                        break;
+                                    case 3:
+                                        $repeatValue = $get_searched_event->get_repeat_month();
+                                        break;
+                                    case 4:
+                                        $repeatValue = $get_searched_event->get_repeat_year();
+                                        break;
+                                    default:
+                                        $repeatValue = $get_searched_event->get_repeat_day();
+                                }
+                                if(is_null($repeatValue) || $repeatValue === 0){
+                                    $repeatValue = 1;
+                                }
+                                $event_dates = \GDCalendar\Helpers\Builders\CalendarBuilder::getRepeatedEventsDateRange($eventStartDay, $eventEndDate, $eventInterval, $repeatValue, $maxDate, $minDate, $repeatTypeValue, $eventAllDay );
+                            }
+                            else{
+                                $event_dates = $get_searched_event->get_date_range();
                             }
                             if(!empty($event_dates)):
                                 foreach ($event_dates as $value){
-	                                foreach ($value as $event_date):
-
+                                    foreach ($value as $event_date):
                                         if($date === substr($event_date, 0, 10)){
                                             if ($counter <= 3) {
                                                 $circle = '';
@@ -191,7 +167,7 @@ for ($row=1; $row<=3; $row++) {
                                                     $circle = 'circle_third';
                                                 }
 
-	                                            $has_event.='<span class="'.$circle.'"></span>';
+                                                $has_event.='<span class="'.$circle.'"></span>';
 
                                             }
                                             $counter++;
@@ -204,11 +180,11 @@ for ($row=1; $row<=3; $row++) {
                     else{
                         if($events && !empty($events)) {
 
-	                        $sort_events = array();
-	                        foreach ($events as $key => $value){
-		                        $sort_events[] = strtotime(substr($value->get_start_date(), 11, 8));
-	                        }
-	                        array_multisort($sort_events, SORT_ASC, $events);
+                            $sort_events = array();
+                            foreach ($events as $key => $value){
+                                $sort_events[] = strtotime(substr($value->get_start_date(), 11, 8));
+                            }
+                            array_multisort($sort_events, SORT_ASC, $events);
 
                             foreach ($events as $event) {
                                 if (!empty($selected_categories)) {
@@ -226,86 +202,61 @@ for ($row=1; $row<=3; $row++) {
                                     $result = true;
                                 }
                                 if (true === $result) {
-	                                if( $event->get_repeat() === 'repeat' && $event->get_repeat_type() !== 'choose_type') {
-		                                $repeat_type = absint($event->get_repeat_type());
-		                                $eventAllDay = $event->get_all_day();
-		                                $eventStartDay = new DateTime($event->get_start_date());
-		                                $eventEndDate = new DateTime($event->get_end_date());
-		                                $eventInterval = intval($eventStartDay->diff($eventEndDate)->format('%a'));
+                                    if( $event->get_repeat() === 'repeat' && $event->get_repeat_type() !== 'choose_type') {
+                                        $repeat_type = absint($event->get_repeat_type());
+                                        $eventAllDay = $event->get_all_day();
+                                        $eventStartDay = new DateTime($event->get_start_date());
+                                        $eventEndDate = new DateTime($event->get_end_date());
+                                        $eventInterval = intval($eventStartDay->diff($eventEndDate)->format('%a'));
 
-		                                $repeatTypeValue = \GDCalendar\Models\PostTypes\Event::$repeat_types[ $repeat_type ];
+                                        $repeatTypeValue = \GDCalendar\Models\PostTypes\Event::$repeat_types[ $repeat_type ];
 
-		                                $maxDate = new DateTime($year->getLastDay());
-		                                $minDate = new DateTime($year->getFirstDay());
+                                        $maxDate = new DateTime($year->getLastDay());
+                                        $minDate = new DateTime($year->getFirstDay());
 
-		                                switch($repeat_type){
-			                                case 1:
-				                                $repeatValue = $event->get_repeat_day();
-				                                break;
-			                                case 2:
-				                                $repeatValue = $event->get_repeat_week();
-				                                break;
-			                                case 3:
-				                                $repeatValue = $event->get_repeat_month();
-				                                break;
-			                                case 4:
-				                                $repeatValue = $event->get_repeat_year();
-				                                break;
-			                                default:
-				                                $repeatValue = $event->get_repeat_day();
-		                                }
-		                                if(is_null($repeatValue) || $repeatValue === 0){
-			                                $repeatValue = 1;
-		                                }
-		                                $event_dates = \GDCalendar\Helpers\Builders\CalendarBuilder::getRepeatedEventsDateRange($eventStartDay, $eventEndDate, $eventInterval, $repeatValue, $maxDate, $minDate, $repeatTypeValue, $eventAllDay );
-	                                }else{
-		                                $event_dates = $event->get_date_range();
-	                                }
-	                                if(!empty($event_dates)):                                 
-                                     foreach($events as $item){
-                                            $item_id = $item->get_id();
-                                            $primera_categoria = get_the_terms($item_id, 'event_category')[0];
-                                            $post_name = get_post($item_id);
-                                            //echo $post_name->post_title . ' ' . $item->get_id() .  ' ' . $primera_categoria->name . '<br>';
-
-                                            $color_categoria = get_field('color_de_la_categoria', $primera_categoria);
-                                            //var_dump($color_categoria);
-                                                       
-                                            $post_date = $item->get_date_range()[0];
-                                            //echo $post_date[0] . '<br>';
-                                        foreach ($event_dates as $value) {
-                                            //var_dump($value);
-	                                        foreach ($value as $event_date):
-                                                if ($date === substr($event_date, 0, 10)) {
-                                                     //echo substr($event_date, 0, 10) . '<br> <br> <br>';
-
-                                                    
-
-                                                        
-                                                                                                                                         
-                                                        // //if ($counter <= 3) {
-                                                        //     $circle = '';
-                                                        //     if ($counter == 1) {
-                                                        //         $circle = 'circle_first';
-                                                        //     } elseif ($counter == 2) {
-                                                        //         $circle = 'circle_second';
-                                                        //     } elseif ($counter == 3) {
-                                                        //         $circle = 'circle_third';
-                                                        //     }
-
-                                                            if ($post_date[0] === substr($value[0], 0, 10)) {
-                                                                $has_event.=' <span style="background-color:'. $color_categoria . ';"class="pukkas_circles circle_first '.$circle.'"></span>';
-                                                                
-                                                            }
-
-                                                        //}
-                                                        //$counter++;
-                                                    }
-                                                
-	                                        endforeach;
-                                            }
+                                        switch($repeat_type){
+                                            case 1:
+                                                $repeatValue = $event->get_repeat_day();
+                                                break;
+                                            case 2:
+                                                $repeatValue = $event->get_repeat_week();
+                                                break;
+                                            case 3:
+                                                $repeatValue = $event->get_repeat_month();
+                                                break;
+                                            case 4:
+                                                $repeatValue = $event->get_repeat_year();
+                                                break;
+                                            default:
+                                                $repeatValue = $event->get_repeat_day();
                                         }
-                                    
+                                        if(is_null($repeatValue) || $repeatValue === 0){
+                                            $repeatValue = 1;
+                                        }
+                                        $event_dates = \GDCalendar\Helpers\Builders\CalendarBuilder::getRepeatedEventsDateRange($eventStartDay, $eventEndDate, $eventInterval, $repeatValue, $maxDate, $minDate, $repeatTypeValue, $eventAllDay );
+                                    }else{
+                                        $event_dates = $event->get_date_range();
+
+                                    }
+                                    if(!empty($event_dates)):
+                                        foreach ($event_dates as $value) {
+
+                                            foreach ($value as $event_date):
+
+                                                if ($date === substr($event_date, 0, 10)) {
+               
+                                                        $item_id = $event->get_id();
+
+                                                        $primera_categoria = get_the_terms($item_id, 'event_category')[0];
+                                                        $post_name = get_post($item_id);
+
+                                                        $color_categoria = get_field('color_de_la_categoria', $primera_categoria);
+                                                                        
+                                                $has_event.=' <span title="' . $post_name->post_title . '"' . ' style="background-color:'. $color_categoria . ';"class="pukkas_circles circle_first"></span>';
+                                                    
+                                                }
+                                            endforeach;
+                                        }
                                     endif;
                                 }
                             }
@@ -313,8 +264,8 @@ for ($row=1; $row<=3; $row++) {
                     }
 
                     if($has_event!=""){
-	                    $evn_small_wrapper.=$has_event."</div>";
-	                    echo  $evn_small_wrapper;
+                        $evn_small_wrapper.=$has_event."</div>";
+                        echo  $evn_small_wrapper;
                     }
                 ?>
 
