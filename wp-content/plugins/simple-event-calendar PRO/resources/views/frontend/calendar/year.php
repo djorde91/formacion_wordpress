@@ -3,7 +3,7 @@
  * Calendar Year View
  * @var $year \GDCalendar\Helpers\Builders\MonthCalendarBuilder
  */
- // Vista anual modificada por Pukkas, (Mirar el Plugin original para recuperar este archivo.)
+ // Vista anual modificada por Pukkas, (Mirar el Plugin original para recuperar este archivo. la modificación consiste en incluir colores en los eventos segun su categoría y hacer que el primer día de la semana sea lunes.)
 $months = $year->getMonthsOfYear();
 $currentDateComponents = $year->getDateComponents();
 $currentMonthName = $currentDateComponents['month'];
@@ -67,7 +67,14 @@ for ($row=1; $row<=3; $row++) {
         echo '<td class="gd_calendar_month '.$extraline.'">';
         $month++;
         $dateComponents = $year->getDateComponents($month);
-        $dayOfWeek = $dateComponents['wday'];
+        //Pukkas here, forzamos que los días se ajusten a lunes el primer día.
+        $dayOfWeek = $dateComponents['wday'] -1;
+
+        if ($dayOfWeek == -1 ) {
+            $dayOfWeek =+ 6;
+        }
+        //echo $dayOfWeek;
+
         $thisYear = absint(date("Y"));
         $currentMonth=absint(date('m', strtotime('-1 month')))+1;
         ?>
@@ -89,7 +96,9 @@ for ($row=1; $row<=3; $row++) {
                 $currentDay = 1;
                 $weeksIn=0;
                 $extraline="";
-                while ($currentDay <= $year->getDaysCount($month)) {
+                while ($currentDay  <= $year->getDaysCount($month)) {
+
+
                     if ($dayOfWeek == 7) {
                         $dayOfWeek = 0;
                         ?>
@@ -98,10 +107,18 @@ for ($row=1; $row<=3; $row++) {
                         <tr>
                         <?php
                     }
+
+                // if ($currentDay == 1){
+                //     $currentDay = 0;
+                // }else{
+                //     $currentDay = $currentDay;
+                // }
+
                 $currentDayRel = str_pad($currentDay, 2, "0", STR_PAD_LEFT);
                 $currentMonthRel = str_pad($month, 2, "0", STR_PAD_LEFT);
                 $date = $year->getYear()."-$currentMonthRel-$currentDayRel";
                 ?>
+
                 <td class='gd_cyc' rel='<?php echo $date; ?>'>
                 <p <?php echo ($year->getCurrentDate() === $date ) ? 'class="gd_calendar_year_current_date"' : ''; ?>><?php echo $currentDay; ?></p>
 

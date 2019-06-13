@@ -34,12 +34,12 @@ class CalendarBuilder
      * array containing abbreviations of days of week.
      * @var array
      */
-    private $days_of_week = array('SUN','MON','TUE','WED','THU','FRI','SAT');
+    private $days_of_week = array('LUN','MAR','MIE','JUE','VIE','SAB','DOM');
 
     /**
      * @var array
      */
-    private $months_of_year = array('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
+    private $months_of_year = array('Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
 
     /**
      * @var array
