@@ -94,8 +94,3 @@ add_action( 'init', 'sugerencias_custom_post', 0 );
 
 
 
-
-
-
-
-
